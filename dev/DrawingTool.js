@@ -4,6 +4,9 @@
 
 import baidu from './modules/baidu_event';
 
+const BMAP_DRAWING_POLYLINE  = "polyline",   // 鼠标画线模式
+    BMAP_DRAWING_RECTANGLE = "rectangle",  // 鼠标画矩形模式
+    BMAP_DRAWING_POLYGON   = "polygon";    // 鼠标画多边形模式
 /**
  * 绘制工具面板，自定义控件
  */
@@ -17,8 +20,6 @@ function DrawingTool(drawingManager, drawingToolOptions) {
 
     //默认所有工具栏都显示
     this.defaultDrawingModes = [
-        BMAP_DRAWING_MARKER,
-        BMAP_DRAWING_CIRCLE,
         BMAP_DRAWING_POLYLINE,
         BMAP_DRAWING_POLYGON,
         BMAP_DRAWING_RECTANGLE
@@ -71,8 +72,6 @@ DrawingTool.prototype._generalHtml = function (map) {
     //鼠标经过工具栏上的提示信息
     var tips = {};
     tips["hander"] = "拖动地图";
-    tips[BMAP_DRAWING_MARKER] = "画点";
-    tips[BMAP_DRAWING_CIRCLE] = "画圆";
     tips[BMAP_DRAWING_POLYLINE] = "画折线";
     tips[BMAP_DRAWING_POLYGON] = "画多边形";
     tips[BMAP_DRAWING_RECTANGLE] = "画矩形";

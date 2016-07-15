@@ -4,9 +4,11 @@
 import Store from './store';
 import GlobalEvent from '../events/globalEvent';
 import baidu from '../modules/baidu_event';
-// import Polygon from '../modules/polygonCoculate';
-
 import PolygonDiff from '../modules/polygonDiff';
+
+const BMAP_DRAWING_POLYLINE  = "polyline",   // 鼠标画线模式
+    BMAP_DRAWING_RECTANGLE = "rectangle",  // 鼠标画矩形模式
+    BMAP_DRAWING_POLYGON   = "polygon";    // 鼠标画多边形模式
 
 class GlobalStore extends Store {
     constructor() {

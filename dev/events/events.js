@@ -49,7 +49,6 @@ export default class Events {
     emit(channel, data) {
         let args = Array.prototype.slice.call(arguments, 1);
         for (var i in this.emits[channel]) {
-            console.log('args:', args);
             this.emits[channel][i](...args);
         }
     }

@@ -96,7 +96,6 @@ class DrawLayer {
         if (blockData.length === 0 || !blockData) {
             return;
         }
-        console.log('polygon Data:', blockData);
         blockData.map((item, index) => {
             item.polygons.map(pitem => {
                 let pixels = pitem.map(spitem => {

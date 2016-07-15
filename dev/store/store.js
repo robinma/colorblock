@@ -3,18 +3,16 @@
  * @author mazhongjie@baidu.com
  */
 
-import Events from '../modules/events';
+import Events from '../events/events';
 
-class Store{
+class Store extends Events{
     constructor() {
-       Events.mixTo(this);
+       super();
     }
     bindEvent(event) {
         this.event = event;
     }
 }
-
-Store.prototype.listen = Store.prototype.on;
 
 
 export default Store;

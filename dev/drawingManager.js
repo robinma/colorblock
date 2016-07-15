@@ -7,6 +7,10 @@ import globalStore from './store/globalStore';
 import globalEvent from './events/globalEvent';
 import baidu from './modules/baidu_event';
 
+const BMAP_DRAWING_POLYLINE  = "polyline",   // 鼠标画线模式
+    BMAP_DRAWING_RECTANGLE = "rectangle",  // 鼠标画矩形模式
+    BMAP_DRAWING_POLYGON   = "polygon";    // 鼠标画多边形模式
+
 class DrawingManager {
     constructor(map) {
         this._map = map;
@@ -116,7 +120,7 @@ class DrawingManager {
     setDrawingMode(DrawingType) {
         //与当前模式不一样时候才进行重新绑定事件
         var drawingType = globalStore.getDrawingType();
-        if (drawingType!= DrawingType) {
+        if (drawingType!== DrawingType) {
             globalEvent.emit('setDrawType', DrawingType);
         }
     }
@@ -380,6 +384,7 @@ class DrawingManager {
             options.calculate = calculate.data || null;
             options.label = calculate.label || null;
         }
+       
         this.dispatchEvent(drawingType + 'complete', overlay);
         this.dispatchEvent('overlaycomplete', options);
     } 

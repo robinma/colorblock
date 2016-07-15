@@ -5,11 +5,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1056,11 +1056,94 @@ function isFunction(func) {
     return Object.prototype.toString.call(func) === '[object Function]';
 }
 
-var Store = function () {
+/**
+ * @file global Event
+ */
+
+var Events$1 = function () {
+    function Events$1() {
+        _classCallCheck(this, Events$1);
+
+        this.emits = {};
+        this.maxId = 0;
+    }
+    /**
+     * listen for a channle
+     * @param  {String} channle
+     * @param  {Function} fn
+     * @returns the listener's id
+     */
+
+
+    _createClass(Events$1, [{
+        key: "on",
+        value: function on(channel, fn) {
+            this.emits[channel] = this.emits[channel] || {};
+            var id = ++this.maxId;
+            this.emits[channel][id] = fn;
+            return id;
+        }
+        // same with on function
+
+    }, {
+        key: "listen",
+        value: function listen() {
+            this.on.apply(this, arguments);
+        }
+
+        /**
+         * remove the listener  
+         * @param  {Number} id the linstner's id
+         */
+
+    }, {
+        key: "unbind",
+        value: function unbind(id) {
+            for (var channel in this.emits) {
+                var typeFn = this.emits[channel];
+                for (var _id in typeFn) {
+                    if (id == id) {
+                        delete this.emits[channel][id];
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * emit data to a special channel
+         * @param  {String} channel
+         * @param  {Object} data
+         */
+
+    }, {
+        key: "emit",
+        value: function emit(channel, data) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            for (var i in this.emits[channel]) {
+                var _emits$channel;
+
+                (_emits$channel = this.emits[channel])[i].apply(_emits$channel, _toConsumableArray(args));
+            }
+        }
+    }, {
+        key: "trigger",
+        value: function trigger() {
+            this.emit.apply(this, arguments);
+        }
+    }]);
+
+    return Events$1;
+}();
+
+var Store = function (_Events$) {
+    _inherits(Store, _Events$);
+
     function Store() {
         _classCallCheck(this, Store);
 
-        Events.mixTo(this);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Store).call(this));
     }
 
     _createClass(Store, [{
@@ -1071,11 +1154,9 @@ var Store = function () {
     }]);
 
     return Store;
-}();
+}(Events$1);
 
-Store.prototype.listen = Store.prototype.on;
-
-var event = new Events();
+var event = new Events$1();
 
 /**
  * @获取面信息 a - b 操作
@@ -1269,15 +1350,18 @@ var Point = function Point(x, y) {
     this.y = y;
 };
 
+var BMAP_DRAWING_POLYGON$1 = "polygon";
+// 鼠标画多边形模式
+
 var GlobalStore = function (_Store) {
     _inherits(GlobalStore, _Store);
 
     function GlobalStore() {
         _classCallCheck(this, GlobalStore);
 
-        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GlobalStore).call(this));
+        var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(GlobalStore).call(this));
 
-        _this.data = {
+        _this2.data = {
             drawingType: 'normal',
             _isopen: false,
             cacheData: [],
@@ -1286,9 +1370,9 @@ var GlobalStore = function (_Store) {
             // 所有交点
             interPoints: []
         };
-        _this.bindEvent(event);
-        _this.onReady();
-        return _this;
+        _this2.bindEvent(event);
+        _this2.onReady();
+        return _this2;
     }
 
     _createClass(GlobalStore, [{
@@ -1378,7 +1462,7 @@ var GlobalStore = function (_Store) {
         value: function _formateData(data) {
 
             var drawType = this.getDrawingType();
-            if (drawType === BMAP_DRAWING_POLYGON && data.length > 0) {
+            if (drawType === BMAP_DRAWING_POLYGON$1 && data.length > 0) {
                 data = data.concat(data[0]);
             }
             return data;
@@ -1565,7 +1649,6 @@ var DrawLayer = function () {
             if (blockData.length === 0 || !blockData) {
                 return;
             }
-            console.log('polygon Data:', blockData);
             blockData.map(function (item, index) {
                 item.polygons.map(function (pitem) {
                     var pixels = pitem.map(function (spitem) {
@@ -1791,6 +1874,10 @@ var styleOptions = {
     strokeWeight: 3 //边线的宽度，以像素为单位。
 };
 
+var BMAP_DRAWING_RECTANGLE$2 = "rectangle";
+var BMAP_DRAWING_POLYGON$2 = "polygon";
+// 鼠标画多边形模式
+
 var Config = function () {
     function Config(param) {
         _classCallCheck(this, Config);
@@ -1804,9 +1891,7 @@ var Config = function () {
             enableDrawingTool: true,
             enableCalculate: false,
             controlButton: 'left',
-            drawingModes: [
-            // BMAP_DRAWING_POLYLINE,
-            BMAP_DRAWING_POLYGON, BMAP_DRAWING_RECTANGLE]
+            drawingModes: [BMAP_DRAWING_POLYGON$2, BMAP_DRAWING_RECTANGLE$2]
         };
         this.mergeData(param);
     }
@@ -1849,6 +1934,11 @@ var Config = function () {
 
     return Config;
 }();
+
+var BMAP_DRAWING_POLYLINE$3 = "polyline";
+var BMAP_DRAWING_RECTANGLE$3 = "rectangle";
+var BMAP_DRAWING_POLYGON$3 = "polygon";
+// 鼠标画多边形模式
 
 var DrawingManager = function () {
     function DrawingManager(map) {
@@ -1983,7 +2073,7 @@ var DrawingManager = function () {
         value: function setDrawingMode(DrawingType) {
             //与当前模式不一样时候才进行重新绑定事件
             var drawingType = globalStore.getDrawingType();
-            if (drawingType != DrawingType) {
+            if (drawingType !== DrawingType) {
                 event.emit('setDrawType', DrawingType);
             }
         }
@@ -2027,11 +2117,11 @@ var DrawingManager = function () {
             if (_isopen) {
                 self._canvas.__listeners = {};
                 switch (drawingType) {
-                    case BMAP_DRAWING_POLYLINE:
-                    case BMAP_DRAWING_POLYGON:
+                    case BMAP_DRAWING_POLYLINE$3:
+                    case BMAP_DRAWING_POLYGON$3:
                         self._bindPolylineOrPolygon();
                         break;
-                    case BMAP_DRAWING_RECTANGLE:
+                    case BMAP_DRAWING_RECTANGLE$3:
                         self._bindRectangle();
                         break;
                 }
@@ -2086,9 +2176,9 @@ var DrawingManager = function () {
 
                 if (points.length === 1) {
                     // 线段
-                    if (drawingType === BMAP_DRAWING_POLYLINE) {
+                    if (drawingType === BMAP_DRAWING_POLYLINE$3) {
                         overlay = new BMap.Polyline(drawPoint, {});
-                    } else if (drawingType === BMAP_DRAWING_POLYGON) {
+                    } else if (drawingType === BMAP_DRAWING_POLYGON$3) {
                         //多边形
                         overlay = new BMap.Polygon(drawPoint, {});
                     }
@@ -2264,6 +2354,7 @@ var DrawingManager = function () {
                 options.calculate = calculate.data || null;
                 options.label = calculate.label || null;
             }
+
             this.dispatchEvent(drawingType + 'complete', overlay);
             this.dispatchEvent('overlaycomplete', options);
         }
@@ -2281,6 +2372,10 @@ DrawingManager.prototype.dispatchEvent = baidu$1.lang.Class.prototype.dispatchEv
 DrawingManager.prototype.addEventListener = baidu$1.lang.Class.prototype.addEventListener;
 DrawingManager.prototype.removeEventListener = baidu$1.lang.Class.prototype.removeEventListener;
 
+var BMAP_DRAWING_POLYLINE$4 = "polyline";
+var BMAP_DRAWING_RECTANGLE$4 = "rectangle";
+var BMAP_DRAWING_POLYGON$4 = "polygon";
+// 鼠标画多边形模式
 /**
  * 绘制工具面板，自定义控件
  */
@@ -2293,7 +2388,7 @@ function DrawingTool(drawingManager, drawingToolOptions) {
     this.defaultOffset = new BMap.Size(10, 10);
 
     //默认所有工具栏都显示
-    this.defaultDrawingModes = [BMAP_DRAWING_MARKER, BMAP_DRAWING_CIRCLE, BMAP_DRAWING_POLYLINE, BMAP_DRAWING_POLYGON, BMAP_DRAWING_RECTANGLE];
+    this.defaultDrawingModes = [BMAP_DRAWING_POLYLINE$4, BMAP_DRAWING_POLYGON$4, BMAP_DRAWING_RECTANGLE$4];
     //工具栏可显示的绘制模式
     if (drawingToolOptions.drawingModes) {
         this.drawingModes = drawingToolOptions.drawingModes;
@@ -2342,11 +2437,9 @@ DrawingTool.prototype._generalHtml = function (map) {
     //鼠标经过工具栏上的提示信息
     var tips = {};
     tips["hander"] = "拖动地图";
-    tips[BMAP_DRAWING_MARKER] = "画点";
-    tips[BMAP_DRAWING_CIRCLE] = "画圆";
-    tips[BMAP_DRAWING_POLYLINE] = "画折线";
-    tips[BMAP_DRAWING_POLYGON] = "画多边形";
-    tips[BMAP_DRAWING_RECTANGLE] = "画矩形";
+    tips[BMAP_DRAWING_POLYLINE$4] = "画折线";
+    tips[BMAP_DRAWING_POLYGON$4] = "画多边形";
+    tips[BMAP_DRAWING_RECTANGLE$4] = "画矩形";
 
     var getItem = function getItem(className, drawingType) {
         return '<a class="' + className + '" drawingType="' + drawingType + '" href="javascript:void(0)" title="' + tips[drawingType] + '" onfocus="this.blur()"></a>';
@@ -2439,19 +2532,16 @@ var DispatchEvent = function () {
         value: function _listenStore() {
             var self = this;
             globalStore.listen('ready', function (type, param) {
+                var _self$root;
+
                 var args = arguments;
                 switch (type) {
                     case 'deletePolygonById':
                     case 'setDrawType':
-                        self._dispatchEvent.apply(self, _toConsumableArray(args));
+                        (_self$root = self.root).dispatchEvent.apply(_self$root, _toConsumableArray(args));
                         break;
                 }
             });
-        }
-    }, {
-        key: "_dispatchEvent",
-        value: function _dispatchEvent() {
-            this.root.dispatchEvent(arguments);
         }
     }]);
 
@@ -2474,15 +2564,15 @@ var ColorBlock = function (_DrawingManager) {
     function ColorBlock(mapObj, param) {
         _classCallCheck(this, ColorBlock);
 
-        var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(ColorBlock).call(this, mapObj));
+        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(ColorBlock).call(this, mapObj));
 
-        Events.mixTo(_this2);
-        _this2._map = mapObj;
-        _this2._configObj = new Config(param);
-        _this2.config = _this2._configObj.getConfig();
-        _this2.dispatchEvn = new DispatchEvent(_this2);
-        _this2._init();
-        return _this2;
+        Events.mixTo(_this3);
+        _this3._map = mapObj;
+        _this3._configObj = new Config(param);
+        _this3.config = _this3._configObj.getConfig();
+        _this3.dispatchEvn = new DispatchEvent(_this3);
+        _this3._init();
+        return _this3;
     }
 
     _createClass(ColorBlock, [{

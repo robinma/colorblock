@@ -10,6 +10,10 @@ var styleOptions = {
     strokeWeight: 3       //边线的宽度，以像素为单位。
 }
 
+const BMAP_DRAWING_POLYLINE  = "polyline",   // 鼠标画线模式
+    BMAP_DRAWING_RECTANGLE = "rectangle",  // 鼠标画矩形模式
+    BMAP_DRAWING_POLYGON   = "polygon";    // 鼠标画多边形模式
+
 class Config {
     constructor(param) {
         this.config = {
@@ -22,7 +26,6 @@ class Config {
             enableCalculate: false,
             controlButton: 'left',
             drawingModes: [
-                // BMAP_DRAWING_POLYLINE,
                 BMAP_DRAWING_POLYGON,
                 BMAP_DRAWING_RECTANGLE
             ]

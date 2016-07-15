@@ -21,7 +21,7 @@ var BMapLib = window.BMapLib = BMapLib || {};
 const BMAP_DRAWING_POLYLINE  = "polyline",   // 鼠标画线模式
     BMAP_DRAWING_RECTANGLE = "rectangle",  // 鼠标画矩形模式
     BMAP_DRAWING_POLYGON   = "polygon";    // 鼠标画多边形模式
-
+    
 class ColorBlock extends drawingManager{
     constructor(mapObj, param) {
         super(mapObj);

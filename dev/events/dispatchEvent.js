@@ -17,14 +17,9 @@ export default class DispatchEvent {
             switch(type) {
                 case 'deletePolygonById':
                 case 'setDrawType':
-                    self._dispatchEvent(...args);
+                    self.root.dispatchEvent(...args);
                     break;
             }
         });
     }
-
-    _dispatchEvent() {
-        this.root.dispatchEvent(arguments);
-    }
-
 };
